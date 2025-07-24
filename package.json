@@ -1,0 +1,21 @@
+{
+  "name": "ecare-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright Test Framework for Ecare",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "@playwright/test": "^1.40.0"
+  }
+}
