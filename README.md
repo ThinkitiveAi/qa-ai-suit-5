@@ -64,9 +64,12 @@ npx playwright show-report
 ## Test Files
 
 - `tests/add-provider.spec.js` - Tests for adding provider functionality
+- `tests/login.spec.js` - Tests for login functionality
+- `tests/schedule-availability.spec.js` - Tests for schedule availability functionality
 
 ## Helper Modules
 
 - `utils/auth.js` - Authentication helper functions
 - `utils/provider.js` - Provider-related helper functions
-- `utils/helpers.js` - General helper functions 
+- `utils/helpers.js` - General helper functions
+- `utils/scheduling.js` - Scheduling-related helper functions
