@@ -3,6 +3,7 @@
  */
 const config = require('../config/env');
 const helpers = require('./helpers');
+const { faker } = require('@faker-js/faker');
 
 /**
  * Navigate to the providers tab in settings
@@ -15,21 +16,17 @@ async function navigateToProviders(page) {
 }
 
 /**
- * Generate random provider data
+ * Generate random provider data using faker
  * @returns {Object} Random provider data
  */
 function generateRandomProviderData() {
-  // Generate random name components
-  const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Jamie', 'Avery', 'Dakota'];
-  const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Rodriguez', 'Wilson'];
+  // Generate random name components using faker
+  const genderType = faker.helpers.arrayElement(['male', 'female']);
+  const firstName = faker.person.firstName(genderType);
+  const lastName = faker.person.lastName();
   
-  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-  
-  // Generate random email with timestamp to ensure uniqueness
-  const timestamp = new Date().getTime();
-  const randomString = Math.random().toString(36).substring(2, 6);
-  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${randomString}${timestamp}@ecarehealth.com`;
+  // Generate random email that looks professional
+  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@ecarehealth.com`;
   
   // Fixed values for other fields
   return {
