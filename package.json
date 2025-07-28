@@ -5,12 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "test:report": "npx playwright show-report",
+    "test:single": "npx playwright test --grep",
+    "test:api": "npx playwright test tests/api/",
+    "install:playwright": "npx playwright install"
   },
   "keywords": [
     "playwright",
     "testing",
-    "automation"
+    "automation",
+    "api-testing",
+    "healthcare-api"
   ],
   "author": "",
   "license": "ISC",

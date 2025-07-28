@@ -19,7 +19,8 @@ module.exports = defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html', { open: 'never' }],
-    ['list'] // Added list reporter for console output
+    ['list'], // Added list reporter for console output
+    ['json', { outputFile: 'test-results/results.json' }], // Added JSON reporter
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -30,7 +31,16 @@ module.exports = defineConfig({
     screenshot: 'only-on-failure',
     
     /* Record video on failure */
-    video: 'retain-on-failure'
+    video: 'retain-on-failure',
+    
+    /* For API tests, set additional HTTP headers */
+    extraHTTPHeaders: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    
+    /* Ignore HTTPS errors */
+    ignoreHTTPSErrors: true,
   },
 
   /* Configure projects for major browsers */
@@ -39,6 +49,17 @@ module.exports = defineConfig({
       name: 'chromium',
       use: {
         headless: false,
+      },
+    },
+    /* Configure a dedicated project for API testing */
+    {
+      name: 'api',
+      testMatch: '**\/api\/**\/*.spec.js',
+      use: {
+        /* API tests don't need a browser */
+        headless: true,
+        /* Specific API testing settings */
+        baseURL: 'https://stage-api.ecarehealth.com',
       },
     },
   ],

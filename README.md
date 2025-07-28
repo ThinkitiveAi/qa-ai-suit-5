@@ -60,19 +60,38 @@ npx playwright test --debug
 npx playwright show-report
 ```
 
+### Run API tests
+
+```bash
+npm run test:api
+```
+
+Or use the dedicated script:
+
+```bash
+./run-api-tests.sh
+```
+
 ## Project Structure
 
 - `tests/` - Test files
+  - `tests/api/` - API test files
+  - `tests/base/` - Base test classes and fixtures
+  - `tests/setup/` - Test setup and teardown logic
 - `utils/` - Helper functions and utilities
 - `config/` - Configuration files
 - `test-results/` - Test results and artifacts (screenshots, videos, etc.)
 
 ## Test Files
 
+### UI Tests
 - `tests/add-provider.spec.js` - Tests for adding provider functionality
 - `tests/login.spec.js` - Tests for login functionality
 - `tests/schedule-availability.spec.js` - Tests for schedule availability functionality
 - `tests/patient-registration.spec.js` - Tests for patient registration with dynamic data
+
+### API Tests
+- `tests/api/api-endpoints.spec.js` - Comprehensive API endpoint tests covering authentication, patient and provider management, scheduling, and appointments
 
 ## Helper Modules
 
@@ -81,6 +100,7 @@ npx playwright show-report
 - `utils/helpers.js` - General helper functions
 - `utils/scheduling.js` - Scheduling-related helper functions
 - `utils/patient.js` - Patient data generation with Faker.js for dynamic test data
+- `utils/api.js` - API testing helper functions
 
 ## Patient Registration Test
 
@@ -102,4 +122,29 @@ To run only the patient registration test:
 
 ```bash
 npx playwright test tests/patient-registration.spec.js
+```
+
+## API Tests
+
+The API test suite verifies the backend functionality of the eCareHealth platform by making direct API calls. These tests cover:
+
+1. **Authentication** - Provider login and token acquisition
+2. **Patient Management** - Create and retrieve patients
+3. **Provider Management** - Add and retrieve providers
+4. **Schedule Management** - Set and retrieve provider availability
+5. **Appointment Management** - Book appointments
+
+For more details on API testing, see [API Test README](tests/api/README.md).
+
+### Running API Tests
+
+```bash
+# Run all API tests
+npm run test:api
+
+# Run with UI mode
+npm run test:ui -- tests/api/
+
+# Run specific API test
+npm run test:single -- "Provider Login"
 ```
