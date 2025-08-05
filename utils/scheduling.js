@@ -2,6 +2,8 @@
  * Scheduling-related helper functions
  */
 
+const { convertPageTimesToIST } = require('./helpers');
+
 /**
  * Navigate to the availability tab in scheduling
  * @param {import('@playwright/test').Page} page - Playwright page object
@@ -178,6 +180,10 @@ async function bookAppointment(page, appointmentData) {
     await page.getByRole('button', { name: 'View Availability' }).click();
     await page.waitForLoadState('networkidle');
     
+    // Convert UTC times to IST automatically
+    console.log('🕐 Converting availability times from UTC to IST...');
+    await convertPageTimesToIST(page);
+    
     // Find and select available date (today, tomorrow, or any available date)
     if (!await selectAvailableDate(page)) {
       console.log('❌ No available dates found on the calendar');
@@ -247,6 +253,35 @@ async function clickAvailableDate(page, dateNum) {
 }
 
 /**
+ * View provider availability with automatic UTC to IST conversion
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ * @param {string} providerFullName - Full name of the provider
+ * @returns {Promise<boolean>} - True if availability was loaded and converted successfully
+ */
+async function viewProviderAvailabilityInIST(page, providerFullName) {
+  try {
+    // Select provider if not already selected
+    if (providerFullName) {
+      await page.getByLabel('Provider *').click();
+      await page.getByRole('option', { name: new RegExp(providerFullName, 'i') }).first().click();
+    }
+    
+    // View availability
+    await page.getByRole('button', { name: 'View Availability' }).click();
+    await page.waitForLoadState('networkidle');
+    
+    // Convert UTC times to IST automatically
+    console.log('🕐 Converting availability times from UTC to IST...');
+    await convertPageTimesToIST(page);
+    
+    return true;
+  } catch (error) {
+    console.error('Error viewing availability in IST:', error);
+    return false;
+  }
+}
+
+/**
  * Select an available time slot
  * @param {import('@playwright/test').Page} page - Playwright page object
  * @returns {Promise<boolean>} - True if a time slot was selected successfully
@@ -255,7 +290,7 @@ async function selectAvailableTimeSlot(page) {
   // Wait for time slots to appear
   await page.waitForTimeout(2000);
   
-  // Click the first available time slot
+  // Click the first available time slot (now showing IST times)
   const slotLocator = page.locator('button', { hasText: /AM|PM/ }).first();
   try {
     await slotLocator.waitFor({ timeout: 10000 });
@@ -272,5 +307,6 @@ module.exports = {
   setProviderAvailability,
   bookAppointment,
   selectAvailableDate,
-  selectAvailableTimeSlot
+  selectAvailableTimeSlot,
+  viewProviderAvailabilityInIST
 }; 

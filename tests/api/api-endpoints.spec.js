@@ -20,7 +20,7 @@ async function getFreshToken(request) {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json',
       'X-TENANT-ID': CONFIG.tenantId
-    },
+    },x
     data: {
       username: CONFIG.credentials.username,
       password: CONFIG.credentials.password,

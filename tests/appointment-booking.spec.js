@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const env = require('../config/env');
 const { login } = require('../utils/auth');
 const { navigateToProviders, addProvider, generateRandomProviderData } = require('../utils/provider');
-const { bookAppointment, navigateToAppointments } = require('../utils/scheduling');
+const { bookAppointment, navigateToAppointments, navigateToAvailability, setProviderAvailability } = require('../utils/scheduling');
 const { generatePatientData } = require('../utils/patient');
 
 test('Create patient, provider and book appointment', async ({ page }) => {
@@ -60,7 +60,26 @@ test('Create patient, provider and book appointment', async ({ page }) => {
   
   console.log(`✅ Successfully created patient "${patientData.fullName}"`);
   
-  // Step 4: Book Appointment using the framework's booking function
+  // Step 4: Set Provider Availability
+  await navigateToAvailability(page);
+  
+  const availabilityData = {
+    providerFirstName: providerData.firstName,
+    providerLastName: providerData.lastName,
+    timeZone: 'Indian Standard Time',
+    bookingWindow: '52 Week',
+    startTime: '12:00 AM',
+    endTime: ':45 PM (23 hrs 45 mins)',
+    telehealth: true,
+    appointmentType: 'New Patient Visit',
+    duration: '15 minutes',
+    scheduleNotice: '1 Hours Away'
+  };
+  
+  await setProviderAvailability(page, availabilityData);
+  console.log(`✅ Successfully set availability for provider "${providerData.firstName} ${providerData.lastName}"`);
+  
+  // Step 5: Book Appointment using the framework's booking function
   const appointmentData = {
     patientFullName: patientData.fullName,
     providerFullName: `${providerData.firstName} ${providerData.lastName}`,
