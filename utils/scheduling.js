@@ -180,13 +180,11 @@ async function bookAppointment(page, appointmentData) {
     await page.getByRole('button', { name: 'View Availability' }).click();
     await page.waitForLoadState('networkidle');
     
-    // Convert UTC times to IST automatically
-    console.log('🕐 Converting availability times from UTC to IST...');
-    await convertPageTimesToIST(page);
     
-    // Find and select available date (today, tomorrow, or any available date)
+    
+    // Find and select available Monday date only
     if (!await selectAvailableDate(page)) {
-      console.log('❌ No available dates found on the calendar');
+      console.log('❌ No available Monday dates found on the calendar');
       return false;
     }
     
@@ -208,34 +206,42 @@ async function bookAppointment(page, appointmentData) {
 }
 
 /**
- * Select an available date in the calendar
+ * Select an available date in the calendar (Monday only)
  * @param {import('@playwright/test').Page} page - Playwright page object
  * @returns {Promise<boolean>} - True if a date was selected successfully
  */
 async function selectAvailableDate(page) {
-  // Get today's and tomorrow's day of month
   const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  let currentDate = new Date(today);
+  let attempts = 0;
+  const maxAttempts = 365; // Check up to 1 year ahead
   
-  const todayDate = today.getDate();
-  const tomorrowDate = tomorrow.getDate();
+  console.log('🔍 Searching for available Monday dates...');
   
-  // Try to click an enabled gridcell with today's or tomorrow's date
-  if (await clickAvailableDate(page, todayDate) || 
-      await clickAvailableDate(page, tomorrowDate)) {
-    return true;
+  // Keep checking dates until we find an available Monday
+  while (attempts < maxAttempts) {
+    // Check if current date is a Monday (getDay() returns 1 for Monday)
+    if (currentDate.getDay() === 1) {
+      const dayOfMonth = currentDate.getDate();
+      console.log(`📅 Checking Monday: ${currentDate.toDateString()} (day ${dayOfMonth})`);
+      
+      // Try to click this Monday date if it's available
+      if (await clickAvailableDate(page, dayOfMonth)) {
+        console.log(`✅ Successfully selected Monday: ${currentDate.toDateString()}`);
+        return true;
+      }
+    }
+    
+    // Move to next day
+    currentDate.setDate(currentDate.getDate() + 1);
+    attempts++;
   }
   
-  // If today/tomorrow not available, try any available date
-  const anyDateLocator = page.locator(`button[role="gridcell"]:not([disabled])`).first();
-  if (await anyDateLocator.count() > 0) {
-    await anyDateLocator.click();
-    return true;
-  }
-  
+  console.log('❌ No available Monday dates found after checking 1 year ahead');
   return false;
 }
+
+
 
 /**
  * Click a specific date if it's available
